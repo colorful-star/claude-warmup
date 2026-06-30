@@ -1,19 +1,19 @@
 name: Claude Code Warmup
 
-# 目标：把 Claude 订阅的 5 小时使用窗口锚定在荷兰时间每天 07:00 开启。
-# 原理：07:00 用 Claude CLI 发一次极小调用，订阅窗口即从此刻开始计时。
+# 目标：把 Claude 订阅的 5 小时使用窗口锚定在荷兰时间每天 08:00 开启。
+# 原理：08:00 用 Claude CLI 发一次极小调用，订阅窗口即从此刻开始计时。
 #
 # 时区说明（GitHub cron 只认 UTC）：
-# - 荷兰夏令时 CEST=UTC+2: 07:00 本地 = 05:00 UTC
-# - 荷兰冬令时 CET =UTC+1: 07:00 本地 = 06:00 UTC
-# - 挂两个 cron，并在脚本里用 Europe/Amsterdam 校验“当地是否 06 点”，
+# - 荷兰夏令时 CEST=UTC+2: 08:00 本地 = 06:00 UTC
+# - 荷兰冬令时 CET =UTC+1: 08:00 本地 = 07:00 UTC
+# - 挂两个 cron，并在脚本里用 Europe/Amsterdam 校验“当地是否 07 点”，
 #   只有匹配才真正热身，自动适配夏/冬令时切换。
-# - cron 常延迟 5~15 分钟，故 06:50 触发，保证 07:00 前窗口已开。
+# - cron 常延迟 5~15 分钟，故 07:50 触发，保证 08:00 前窗口已开。
 
 on:
   schedule:
-    - cron: '50 4 * * *'   # 夏令时 04:50 UTC ≈ 荷兰 06:50
-    - cron: '50 5 * * *'   # 冬令时 05:50 UTC ≈ 荷兰 06:50
+    - cron: '50 5 * * *'   # 夏令时 05:50 UTC ≈ 荷兰 07:50
+    - cron: '50 6 * * *'   # 冬令时 06:50 UTC ≈ 荷兰 07:50
   workflow_dispatch: {}
 
 concurrency:
@@ -25,16 +25,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Check local hour is 06 (Europe/Amsterdam)
+      - name: Check local hour is 07 (Europe/Amsterdam)
         id: gate
         run: |
           LOCAL_HOUR=$(TZ="Europe/Amsterdam" date +%H)
           echo "Amsterdam local hour: $LOCAL_HOUR"
-          if [ "$LOCAL_HOUR" = "06" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          if [ "$LOCAL_HOUR" = "07" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "run=true" >> "$GITHUB_OUTPUT"
           else
             echo "run=false" >> "$GITHUB_OUTPUT"
-            echo "Not 06:xx Amsterdam time, skipping."
+            echo "Not 07:xx Amsterdam time, skipping."
           fi
 
       - name: Validate configuration
