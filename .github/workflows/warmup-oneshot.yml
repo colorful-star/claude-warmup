@@ -4,11 +4,11 @@ name: Claude Warmup (one-shot)
 # 与每日 warmup.yml 不同，这里没有“早上6点”时间门，cron 到点即执行。
 # 用完后由助手删除本文件（或清空 cron）。
 #
-# 当前设定：今晚荷兰时间 19:20 (CEST=UTC+2) = 17:20 UTC
+# 当前设定：今晚荷兰时间 19:21 (CEST=UTC+2) = 17:21 UTC
 
 on:
   schedule:
-    - cron: '20 17 30 6 *'   # 2026-06-30 17:20 UTC = 荷兰 19:20
+    - cron: '21 17 30 6 *'   # 2026-06-30 17:21 UTC = 荷兰 19:21
   workflow_dispatch: {}
 
 concurrency:
